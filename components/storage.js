@@ -1,0 +1,38 @@
+import { merge } from './object';
+
+function setSessionStorage (key, val) {
+  window.sessionStorage.setItem(key, encodeURI(JSON.stringify(val)));
+}
+
+function getSessionStorage (key) {
+  const val = window.sessionStorage.getItem(key);
+  return val ? JSON.parse(decodeURI(val)) : null;
+}
+
+function clearSessionStorage (key) {
+  window.sessionStorage.removeItem(key);
+}
+
+let appName = 'app';
+let storageKey = location.hostname + ':' + appName;
+
+export function setAppName (name) {
+  appName = name;
+  storageKey = location.hostname + ':' + appName;
+}
+
+export function getSessionData (key) {
+  const storageValue = getSessionStorage(storageKey) || {};
+  return storageValue[key] || {};
+}
+
+export function setSessionData (key, options) {
+  const storageValue = getSessionStorage(storageKey) || {};
+  setSessionStorage(storageKey, merge(storageValue, {
+    [key]: options || {}
+  }));
+}
+
+export function clearSessionData () {
+  clearSessionStorage(storageKey);
+}
